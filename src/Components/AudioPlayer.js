@@ -1,5 +1,6 @@
 import { VStack, HStack, Button, Text, Input, useColorModeValue, Divider } from '@chakra-ui/react';
 import React, { useState } from 'react';
+import axios from 'axios';
 import ReactPlayer from 'react-player';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCirclePlay, faForward, faArrowRotateBackward } from '@fortawesome/free-solid-svg-icons'
@@ -9,17 +10,17 @@ export const AudioPlayer = props => {
 	const rightColor = useColorModeValue('teal.400','teal.200');
 	const wrongColor = useColorModeValue('red.500','red.300');
 
+	const player = React.createRef();
+
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [value, setValue] = useState('');
 	const [answer, setAnswer] = useState('');
-	let i = [1, 2, 5];
 	const [accuracy, setAccuracy] = useState(0);
 	const [score, setScore] = useState(0);
 	const [totalScore, setTotalScore] = useState(0);
 
-	const player = React.createRef();
-
 	let url = 'https://file-examples.com/storage/feb8f98f1d627c0dc94b8cf/2017/11/file_example_MP3_700KB.mp3';
+	let i = [1, 2, 5];
 
 	const start = () => {
 		setValue('');
@@ -32,6 +33,8 @@ export const AudioPlayer = props => {
 	const handleStart = () => {
 		if (isPlaying) {
 			// TO DO: get new voice
+			axios.get('https://yiwtush6ie.execute-api.ap-southeast-1.amazonaws.com/default/getVoice')
+        .then(response => setAnswer(response.data.url));
 		}
 		setIsPlaying(!isPlaying);
 		start();
@@ -54,14 +57,17 @@ export const AudioPlayer = props => {
 		if (!isPlaying && e.key === 'Enter') {
 			setIsPlaying(true);
 			start();
-		} else if (e.key === 'Enter') {
+		} else if (e.key === 'Enter' || e.key === ' ') {
 			setAnswer(newAnswer+' ');
 			setValue('');
-		} else if (e.key === ' ') {
-			setAnswer(newAnswer);
+		}
+	}
+
+	const handleKeyUp = (e) => {
+		if (e.key === ' ') {
 			setValue('');
 		}
-  }
+	}
 
   return (
 	<VStack spacing={6}>
@@ -106,6 +112,7 @@ export const AudioPlayer = props => {
 			value={value}
 			onChange={handleInputChange}
 			onKeyDown={handleKeyDown}
+			onKeyUp={handleKeyUp}
 			size='lg'
 			width='300px'
 			focusBorderColor={pinkColor}
