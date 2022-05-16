@@ -16,40 +16,36 @@ export const AudioPlayer = props => {
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [value, setValue] = useState('');
 	const [answer, setAnswer] = useState('');
-	const [accuracy, setAccuracy] = useState(0);
+	const [accuracy, setAccuracy] = useState(100);
 	const [score, setScore] = useState(0);
 	const [totalScore, setTotalScore] = useState(0);
+	const [wordCount, setWordCount] = useState(0);
 
 	const [url, setUrl] = useState('');
 	const [index, setIndex] = useState('');
 	const [correct, setCorrect] = useState([]);
-	let i = [1, 2, 5];
 
 	function getVoice() {
-		// axios.get('https://8ep50v6my2.execute-api.ap-southeast-1.amazonaws.com/default/getVoice')
-    //   .then(response => {
-		// 		setUrl(response.data.url);
-		// 		setIndex(response.data.index);
-		// 	})
-		// 	.catch(error => console.log(error));
-		setUrl('https://file-examples.com/storage/feb8f98f1d627c0dc94b8cf/2017/11/file_example_MP3_700KB.mp3');
-		setIndex('2');
+		axios.get('https://8ep50v6my2.execute-api.ap-southeast-1.amazonaws.com/default/getVoice')
+      .then(response => {
+				setUrl(response.data.url);
+				setIndex(response.data.index);
+			})
+			.catch(error => console.log(error));
 	}
 
-	function calculateScore() {
+	function calculateScore(answer) {
 		const data = {
 			index: index,
 			text: answer
 		};
-		const headers = {
-					'Content-Type': 'application/json',
-					"Access-Control-Allow-Origin": "*",
-		};
-		axios.post('https://3f5jnoxxje.execute-api.ap-southeast-1.amazonaws.com/default/calculateScore', data, {"headers" : headers})
+		axios.post('https://x7qritrnxb.execute-api.ap-southeast-1.amazonaws.com/default/calculateScore', data)
       .then(response => {
 				setScore(response.data.score);
 				setTotalScore(response.data.total_word);
 				setCorrect(response.data.correct);
+				const acc = Math.round((response.data.score/(wordCount+1))*100);
+				setAccuracy(acc);
 			})
 			.catch(error => console.log(error));
 	}
@@ -57,9 +53,10 @@ export const AudioPlayer = props => {
 	const start = () => {
 		setValue('');
 		setAnswer('');
-		setAccuracy(0);
+		setAccuracy(100);
 		setScore(0);
 		setTotalScore(0);
+		setWordCount(0);
 	}
 
 	const handleStart = () => {
@@ -91,10 +88,11 @@ export const AudioPlayer = props => {
 			setIsPlaying(true);
 			start();
 		} else if (e.key === 'Enter' || e.key === ' ') {
-			let newAnswer = answer+e.target.value;
-			setAnswer(newAnswer+' ');
+			let newAnswer = answer+e.target.value+' ';
+			setAnswer(newAnswer);
 			setValue('');
-			calculateScore();
+			setWordCount(wordCount+1);
+			calculateScore(newAnswer);
 		}
 	}
 
@@ -139,8 +137,8 @@ export const AudioPlayer = props => {
 			</VStack>
 		</HStack>
 		<Text width='75%' fontSize='xl' as='kbd'>
-    	{answer.split(" ").map((ans, ind) => 
-				<Text style={{display: 'inline'}} color={i.includes(correct) ? rightColor : wrongColor}> {ans} </Text>)
+    	{answer.split(" ").map((ans, i) => 
+				<Text style={{display: 'inline'}} color={!correct.includes(i) ? wrongColor : rightColor}> {ans} </Text>)
       }
  		</Text>
 		<Input
