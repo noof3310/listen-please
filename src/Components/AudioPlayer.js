@@ -14,6 +14,8 @@ export const AudioPlayer = props => {
 	const inputAns = React.createRef();
 
 	const [isPlaying, setIsPlaying] = useState(false);
+	const [playbackRate, setPlaybackRate] = useState(0.65);
+
 	const [value, setValue] = useState('');
 	const [answer, setAnswer] = useState('');
 	const [accuracy, setAccuracy] = useState(100);
@@ -65,17 +67,19 @@ export const AudioPlayer = props => {
 		}
 		if (isPlaying) {
 			getVoice();
-		}
+		} else start();
 		setIsPlaying(!isPlaying);
-		start();
 		inputAns.current.focus();
 	}
 
 	const handleReplay = () => {
 		setIsPlaying(false);
 		player.current.seekTo(0);
-		start();
 	}
+
+	const handleSetPlaybackRate = (e) => {
+		setPlaybackRate(parseFloat(e.target.value));
+  }
 
 	const handleInputChange = (e) => {
     let inputValue = e.target.value;
@@ -138,7 +142,7 @@ export const AudioPlayer = props => {
 		</HStack>
 		<Text width='75%' fontSize='xl' as='kbd'>
     	{answer.split(" ").map((ans, i) => 
-				<Text style={{display: 'inline'}} color={!correct.includes(i) ? wrongColor : rightColor}> {ans} </Text>)
+				<Text style={{display: 'inline'}} color={correct.includes(i) ? rightColor : wrongColor}> {ans} </Text>)
       }
  		</Text>
 		<Input
@@ -153,7 +157,7 @@ export const AudioPlayer = props => {
 			variant='flushed'
 			placeholder='Type here...'
 		/>
-		<ReactPlayer ref={player} playing={isPlaying} url={url} width='0px' height='0px'/>
+		<ReactPlayer ref={player} playing={isPlaying} url={url} playbackRate={playbackRate} width='0px' height='0px'/>
 	</VStack>
   );
 };
