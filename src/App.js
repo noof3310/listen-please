@@ -23,9 +23,9 @@ function App() {
     <ChakraProvider theme={customTheme}>
       <Grid minH='50vh' p={3}>
         <ColorModeSwitcher justifySelf="flex-end" />
-        <VStack spacing={16}>
-					<VStack spacing={4}>
-						<Heading as='h1' size='2xl'>
+        <VStack spacing={12}>
+					<VStack spacing={2}>
+						<Heading as='h1' size='xl'>
 							Listen Please
 						</Heading>
 						<Text fontSize='l' as='samp'> Cloud Computing Final Project </Text>

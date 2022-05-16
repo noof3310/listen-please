@@ -107,37 +107,35 @@ export const AudioPlayer = props => {
 	}
 
   return (
-	<VStack spacing={6}>
+	<VStack spacing={5}>
 		<Divider width='300px' /> 
-		<Text fontSize='2xl'>
+		<Text fontSize='xl'>
 			Please
-			<Text style={{display: 'inline'}} fontWeight='bold' fontSize='2xl'> listen </Text>
+			<Text style={{display: 'inline'}} fontWeight='bold' fontSize='xl'> listen </Text>
 			and
-			<Text style={{display: 'inline'}} fontWeight='bold' fontSize='2xl'> type </Text>
+			<Text style={{display: 'inline'}} fontWeight='bold' fontSize='xl'> type </Text>
 			out what you hear
 		</Text>
 		<HStack spacing={6}>
 			<Button
 				leftIcon={<FontAwesomeIcon icon={isPlaying ? faForward : faCirclePlay}/>}
-				size='lg'
 				onClick={handleStart}> {isPlaying ? 'NEW AUDIO' : 'START'}
 			</Button>
 			{ isPlaying && <Button
 				leftIcon={<FontAwesomeIcon icon={faArrowRotateBackward}/>}
-				size='lg'
 				variant='outline'
 				onClick={handleReplay}> {'REPLAY'}
 			</Button> }
 		</HStack>
-		<Divider width='300px' paddingTop={4} /> 
+		<Divider width='300px' paddingTop={3} /> 
 		<HStack spacing={6}>
 			<VStack spacing={0}>
 				<Text color={pinkColor} as='kbd'> Accuracy </Text>
-				<Text fontWeight='bold' color={pinkColor} fontSize='2xl' as='kbd'> {accuracy}% </Text>
+				<Text fontWeight='bold' color={pinkColor} fontSize='xl' as='kbd'> {accuracy}% </Text>
 			</VStack>
 			<VStack spacing={0}>
 				<Text color={pinkColor} as='kbd'> Score </Text>
-				<Text fontWeight='bold' color={pinkColor} fontSize='2xl' as='kbd'> {score}/{totalScore} </Text>
+				<Text fontWeight='bold' color={pinkColor} fontSize='xl' as='kbd'> {score}/{totalScore} </Text>
 			</VStack>
 		</HStack>
 		<Text width='75%' fontSize='xl' as='kbd'>
@@ -151,7 +149,6 @@ export const AudioPlayer = props => {
 			onChange={handleInputChange}
 			onKeyDown={handleKeyDown}
 			onKeyUp={handleKeyUp}
-			size='lg'
 			width='300px'
 			focusBorderColor={pinkColor}
 			variant='flushed'
