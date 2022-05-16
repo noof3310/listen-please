@@ -11,6 +11,7 @@ export const AudioPlayer = props => {
 	const wrongColor = useColorModeValue('red.500','red.300');
 
 	const player = React.createRef();
+	const inputAns = React.createRef();
 
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [value, setValue] = useState('');
@@ -19,8 +20,39 @@ export const AudioPlayer = props => {
 	const [score, setScore] = useState(0);
 	const [totalScore, setTotalScore] = useState(0);
 
-	let url = 'https://file-examples.com/storage/feb8f98f1d627c0dc94b8cf/2017/11/file_example_MP3_700KB.mp3';
+	const [url, setUrl] = useState('');
+	const [index, setIndex] = useState('');
+	const [correct, setCorrect] = useState([]);
 	let i = [1, 2, 5];
+
+	function getVoice() {
+		// axios.get('https://8ep50v6my2.execute-api.ap-southeast-1.amazonaws.com/default/getVoice')
+    //   .then(response => {
+		// 		setUrl(response.data.url);
+		// 		setIndex(response.data.index);
+		// 	})
+		// 	.catch(error => console.log(error));
+		setUrl('https://file-examples.com/storage/feb8f98f1d627c0dc94b8cf/2017/11/file_example_MP3_700KB.mp3');
+		setIndex('2');
+	}
+
+	function calculateScore() {
+		const data = {
+			index: index,
+			text: answer
+		};
+		const headers = {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin": "*",
+		};
+		axios.post('https://3f5jnoxxje.execute-api.ap-southeast-1.amazonaws.com/default/calculateScore', data, {"headers" : headers})
+      .then(response => {
+				setScore(response.data.score);
+				setTotalScore(response.data.total_word);
+				setCorrect(response.data.correct);
+			})
+			.catch(error => console.log(error));
+	}
 
 	const start = () => {
 		setValue('');
@@ -31,18 +63,15 @@ export const AudioPlayer = props => {
 	}
 
 	const handleStart = () => {
+		if (url === '') {
+			getVoice();
+		}
 		if (isPlaying) {
-			// TO DO: get new voice
-			console.log(1);
-			let headers = {
-        'Content-Type': 'text/plain; charset=utf-8'
-    	};
-			axios.get('https://yiwtush6ie.execute-api.ap-southeast-1.amazonaws.com/default/getVoice', { headers })
-        .then(response => console.log(response.data.url))
-				.catch(error => console.log(error));
+			getVoice();
 		}
 		setIsPlaying(!isPlaying);
 		start();
+		inputAns.current.focus();
 	}
 
 	const handleReplay = () => {
@@ -58,13 +87,14 @@ export const AudioPlayer = props => {
   }
 
 	const handleKeyDown = (e) => {
-		let newAnswer = answer+e.target.value;
 		if (!isPlaying && e.key === 'Enter') {
 			setIsPlaying(true);
 			start();
 		} else if (e.key === 'Enter' || e.key === ' ') {
+			let newAnswer = answer+e.target.value;
 			setAnswer(newAnswer+' ');
 			setValue('');
+			calculateScore();
 		}
 	}
 
@@ -110,10 +140,11 @@ export const AudioPlayer = props => {
 		</HStack>
 		<Text width='75%' fontSize='xl' as='kbd'>
     	{answer.split(" ").map((ans, ind) => 
-				<Text style={{display: 'inline'}} color={i.includes(ind) ? rightColor : wrongColor}> {ans} </Text>)
+				<Text style={{display: 'inline'}} color={i.includes(correct) ? rightColor : wrongColor}> {ans} </Text>)
       }
  		</Text>
 		<Input
+			ref={inputAns}
 			value={value}
 			onChange={handleInputChange}
 			onKeyDown={handleKeyDown}
