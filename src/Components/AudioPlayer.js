@@ -33,8 +33,13 @@ export const AudioPlayer = props => {
 	const handleStart = () => {
 		if (isPlaying) {
 			// TO DO: get new voice
-			axios.get('https://yiwtush6ie.execute-api.ap-southeast-1.amazonaws.com/default/getVoice')
-        .then(response => setAnswer(response.data.url));
+			console.log(1);
+			let headers = {
+        'Content-Type': 'text/plain; charset=utf-8'
+    	};
+			axios.get('https://yiwtush6ie.execute-api.ap-southeast-1.amazonaws.com/default/getVoice', { headers })
+        .then(response => console.log(response.data.url))
+				.catch(error => console.log(error));
 		}
 		setIsPlaying(!isPlaying);
 		start();
