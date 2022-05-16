@@ -14,7 +14,7 @@ export const AudioPlayer = props => {
 	const inputAns = React.createRef();
 
 	const [isPlaying, setIsPlaying] = useState(false);
-	const [playbackRate, setPlaybackRate] = useState(0.65);
+	const [playbackRate, setPlaybackRate] = useState(0.75);
 
 	const [value, setValue] = useState('');
 	const [answer, setAnswer] = useState('');
