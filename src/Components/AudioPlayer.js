@@ -69,6 +69,7 @@ export const AudioPlayer = props => {
 			getVoice();
 		} else start();
 		setIsPlaying(!isPlaying);
+		player.current.seekTo(0);
 		inputAns.current.focus();
 	}
 
